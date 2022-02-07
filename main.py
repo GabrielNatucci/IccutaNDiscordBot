@@ -1,35 +1,29 @@
 import discord
+from discord.ext import commands
 import musica
 
-# cogs = [musica]
+client = discord.Client() #define o cliente numa variavel
+client = commands.Bot(command_prefix='$')
 
-# for i in range(len(cogs)):
-#     cogs[i].setup
-
-arq = open("token.txt", 'r')
+arq = open("token.txt", 'r') 
 TOKEN = arq.readline()
 arq.close()
 
-client = discord.Client()
-
-
 @client.event
-async def on_ready():
+async def on_ready(): # quando ele inicia dispara esse evento
     print("Estou pronto! Estou logado como {}".format(client.user))
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+@client.command()
+async def join(ctx):
+    if ctx.author.voice is None:
+        await ctx.send("Você não está em um canal de voz!")
+    canal = ctx.author.voice.channel
+    if ctx.voice_client is None:
+        await canal.connect()
 
-    if message.content.startswith('$'):
-        await message.channel.send('wolrd!')
+@client.command(pass_context=True) #'pass context' faz o ctx ser passado na função abaixo
+async def desconectar(ctx):
+    await ctx.voice_client.disconnect()
 
-
-async def on_member_join(self, member):
-    guild = member.guild
-    if guild.system_channel is not None:
-        to_send = 'Seja bem vindo ao to {0.name}, {1.mention}'.format(guild ,member)
-        await guild.system_channel.send(to_send)
 
 client.run(TOKEN)
