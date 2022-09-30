@@ -5,17 +5,15 @@ from discord.utils import get
 from discord import FFmpegPCMAudio
 from discord import TextChannel
 import asyncio
-
-
 from youtube_dl import YoutubeDL
 from pytube import YouTube
 
-client = discord.Client() #define o cliente numa variavel
-client = commands.Bot(command_prefix='$') # Seta o prefixo dos comandos como "$"
+intents = discord.Intents.all()
+client = discord.Client(intents=intents) #define o cliente numa variavel
+client = commands.Bot(command_prefix='$', intents=intents)
 
 def devolverTitulo(url):
-    yt = YouTube(url)
-    return yt.title
+    return Youtube(url).title
 
 
 @client.event
@@ -31,9 +29,9 @@ async def join(ctx): # para entrar na call
     canal = ctx.author.voice.channel
     if ctx.author.voice is None:
         await ctx.canal.send("Você não está em um canal de voz!")
-    else: 
+    else:
         await canal.connect()
-            
+
 @client.command(pass_context=True) #'pass context' faz o ctx ser passado na função abaixo
 async def quit(ctx): # para sair da call
     voice = get(client.voice_clients, guild=ctx.guild)
